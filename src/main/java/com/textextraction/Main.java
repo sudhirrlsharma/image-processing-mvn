@@ -4,7 +4,12 @@ import net.sourceforge.tess4j.TesseractException;
 import java.io.File;
 
 /**
- * Main - Sample usage of ImageTextExtractor for OCR
+ * Main - CLI tool for extracting text from images
+ * Usage:
+ *   - java -cp . com.textextraction.Main <image_path>
+ *   - java -cp . com.textextraction.Main <image_path> <language> <format>
+ *
+ * Formats: plain, json, markdown, structured
  */
 public class Main {
 
@@ -13,55 +18,55 @@ public class Main {
             // Initialize the text extractor
             ImageTextExtractor extractor = new ImageTextExtractor();
             
-            // Optional: Set language (default is "eng")
-            extractor.setLanguage("eng");
+            System.out.println("=== Image Text Extraction using Tesseract OCR ===\n");
             
-            // Example usage
-            System.out.println("=== Image Text Extraction using tess4j ===\n");
-            
-            if (args.length > 0) {
-                // Extract text from image provided as command line argument
-                String imagePath = args[0];
-                
-                extractAndPrint(extractor, imagePath);
-            } else {
-                String defaultImagePath = "C:\\Users\\sudhi\\Downloads\\photo.jpg";
-                extractAndPrint(extractor, defaultImagePath);
-                // Display usage information
-                //displayUsage();
+            if (args.length == 0) {
+                displayUsage();
+                System.exit(1);
             }
+            
+            String imagePath = args[0];
+            String language = args.length > 1 ? args[1] : "eng";
+            String format = args.length > 2 ? args[2] : "plain";
+            
+            // Create request and extract text
+            ImageTextExtractor.ExtractTextRequest request = new ImageTextExtractor.ExtractTextRequest(
+                imagePath, language, format
+            );
+            
+            ImageTextExtractor.ExtractTextResponse response = extractor.extractTextFormatted(request);
+            
+            // Display results
+            displayResults(response);
             
         } catch (Exception e) {
             System.err.println("Error: " + e.getMessage());
             e.printStackTrace();
+            System.exit(1);
         }
     }
 
     /**
-     * Extract text from image and print results
-     * @param extractor ImageTextExtractor instance
-     * @param imagePath Path to image file
+     * Display extraction results
+     * @param response The extraction response
      */
-    private static void extractAndPrint(ImageTextExtractor extractor, String imagePath) {
-        try {
-            System.out.println("Processing image: " + imagePath);
-            System.out.println("-".repeat(50));
-            
-            long startTime = System.currentTimeMillis();
-            String extractedText = extractor.extractText(imagePath);
-            long endTime = System.currentTimeMillis();
-            
-            System.out.println("\nExtracted Text:");
-            System.out.println("-".repeat(50));
-            System.out.println(extractedText);
-            System.out.println("-".repeat(50));
-            System.out.println("\nProcessing time: " + (endTime - startTime) + " ms");
-            
-        } catch (TesseractException e) {
-            System.err.println("OCR Error: " + e.getMessage());
-            e.printStackTrace();
-        } catch (IllegalArgumentException e) {
-            System.err.println("Invalid input: " + e.getMessage());
+    private static void displayResults(ImageTextExtractor.ExtractTextResponse response) {
+        System.out.println("\n" + "=".repeat(60));
+        System.out.println("Extraction Results:");
+        System.out.println("=".repeat(60));
+        System.out.println("Image: " + response.imageName);
+        System.out.println("File Size: " + response.imageSize + " bytes");
+        System.out.println("Format: " + response.format);
+        System.out.println("Status: " + (response.success ? "SUCCESS" : "FAILED"));
+        
+        if (!response.success) {
+            System.out.println("Error: " + response.errorMessage);
+        } else {
+            System.out.println("\n" + "-".repeat(60));
+            System.out.println("Formatted Output:");
+            System.out.println("-".repeat(60));
+            System.out.println(response.formattedText);
+            System.out.println("-".repeat(60));
         }
     }
 
@@ -69,14 +74,19 @@ public class Main {
      * Display usage information
      */
     private static void displayUsage() {
-        System.out.println("Usage: java -jar image-processing-ocr-1.0.0.jar <image_path>");
-        System.out.println("\nExample:");
-        System.out.println("  java -jar image-processing-ocr-1.0.0.jar sample.png");
-        System.out.println("  java -jar image-processing-ocr-1.0.0.jar path/to/document.jpg");
-        System.out.println("\nSupported Formats:");
-        System.out.println("  - PNG, JPG, JPEG, TIFF, GIF, BMP");
-        System.out.println("\nNote:");
-        System.out.println("  - Ensure tessdata folder is in the classpath or set the data path");
-        System.out.println("  - Download language files from: https://github.com/UB-Mannheim/tesseract/wiki");
+        System.out.println("Usage: java com.textextraction.Main <image_path> [language] [format]");
+        System.out.println("\nArguments:");
+        System.out.println("  image_path  - Path to the image file (required)");
+        System.out.println("  language    - OCR language code (default: eng)");
+        System.out.println("                Common codes: eng, fra, deu, spa, ita, chi_sim, jpn");
+        System.out.println("  format      - Output format (default: plain)");
+        System.out.println("                Options: plain, json, markdown, structured");
+        System.out.println("\nExamples:");
+        System.out.println("  java com.textextraction.Main document.png");
+        System.out.println("  java com.textextraction.Main document.png eng plain");
+        System.out.println("  java com.textextraction.Main document.png deu structured");
+        System.out.println("  java com.textextraction.Main scan.jpg spa json");
+        System.out.println("\nSupported Image Formats:");
+        System.out.println("  PNG, JPG, JPEG, TIFF, GIF, BMP");
     }
 }
