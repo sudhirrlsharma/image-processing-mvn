@@ -1,6 +1,8 @@
 spring:
   application:
     name: image-processing-ocr
+  main:
+    web-application-type: none
   ai:
     openai:
       api-key: ${OPENAI_API_KEY:your-api-key-here}
@@ -9,13 +11,7 @@ spring:
           model: gpt-4-turbo
           temperature: 0.7
 
-server:
-  port: 8080
-  servlet:
-    context-path: /
-
 logging:
   level:
     root: INFO
-    com.textextraction: DEBUG
-    org.springframework.ai: DEBUG
+    com.textextraction: INFO

@@ -27,13 +27,12 @@ public class TextExtractionController {
             @RequestParam String imagePath,
             @RequestParam(defaultValue = "plain") String format) {
         try {
-            ImageTextExtractor.ExtractTextResponse result = textExtractionService.extractText(imagePath, format);
+            String result = textExtractionService.extractText(imagePath, format).errorMessage;
             return Map.of(
-                "success", result.success,
+                "success", true,
                 "imagePath", imagePath,
                 "format", format,
-                "rawText", result.rawText,
-                "formattedText", result.formattedText
+                "result", result
             );
         } catch (Exception e) {
             return Map.of(

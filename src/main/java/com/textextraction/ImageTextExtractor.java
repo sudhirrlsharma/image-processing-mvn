@@ -43,6 +43,7 @@ public class ImageTextExtractor {
     public ExtractTextResponse extractTextFormatted(ExtractTextRequest request) {
         try {
             File imageFile = new File(request.imagePath);
+            // File imageFile = new File("C:\\Users\\sudhi\\Downloads\\photo.jpg");
             
             if (!imageFile.exists()) {
                 throw new IllegalArgumentException("Image file not found: " + request.imagePath);

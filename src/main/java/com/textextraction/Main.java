@@ -20,12 +20,15 @@ public class Main {
             
             System.out.println("=== Image Text Extraction using Tesseract OCR ===\n");
             
+            String imagePath = "";
             if (args.length == 0) {
-                displayUsage();
-                System.exit(1);
-            }
+                imagePath = "C:\\Users\\sudhi\\Downloads\\photo.jpg";
+                // displayUsage();
+                // System.exit(0);
+                }else{
+                imagePath = args[0];
+                }
             
-            String imagePath = args[0];
             String language = args.length > 1 ? args[1] : "eng";
             String format = args.length > 2 ? args[2] : "plain";
             
