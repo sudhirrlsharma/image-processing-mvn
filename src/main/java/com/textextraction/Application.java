@@ -5,10 +5,6 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
 
-/**
- * Spring Boot Application for Image Text Extraction
- * Runs as a command-line application using CommandLineRunner
- */
 @SpringBootApplication
 public class Application {
 
@@ -16,9 +12,6 @@ public class Application {
         SpringApplication.run(Application.class, args);
     }
 
-    /**
-     * CommandLineRunner implementation for executing image text extraction from command line
-     */
     @Component
     public class ImageExtractionRunner implements CommandLineRunner {
         private final TextExtractionService textExtractionService;
@@ -30,7 +23,6 @@ public class Application {
         @Override
         public void run(String... args) throws Exception {
             try {
-                // Parse command line arguments
                 CLIArgs cliArgs = parseArguments(args);
 
                 if (cliArgs.showHelp || cliArgs.imagePath == null) {
@@ -71,9 +63,6 @@ public class Application {
             }
         }
 
-        /**
-         * Parse command-line arguments
-         */
         private CLIArgs parseArguments(String[] args) {
             CLIArgs result = new CLIArgs();
 
@@ -105,9 +94,6 @@ public class Application {
             return result;
         }
 
-        /**
-         * Display help information
-         */
         private void displayHelp() {
             System.out.println("Image Text Extraction Tool - Spring Boot CLI");
             System.out.println("============================================");
@@ -136,9 +122,6 @@ public class Application {
             System.out.println();
         }
 
-        /**
-         * Display extraction results
-         */
         private void displayResults(ImageTextExtractor.ExtractTextResponse response, boolean verbose) {
             if (verbose) {
                 System.out.println("\n[INFO] Extraction completed");
@@ -162,9 +145,6 @@ public class Application {
             }
         }
 
-        /**
-         * Format bytes to human-readable format
-         */
         private String formatBytes(long bytes) {
             if (bytes <= 0) return "0 B";
             final String[] units = new String[]{"B", "KB", "MB", "GB"};
@@ -173,9 +153,6 @@ public class Application {
         }
     }
 
-    /**
-     * CLI Arguments holder class
-     */
     public static class CLIArgs {
         public String imagePath;
         public String language = "eng";

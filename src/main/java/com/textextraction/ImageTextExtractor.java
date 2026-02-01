@@ -9,59 +9,37 @@ import java.util.Map;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyDescription;
 
-/**
- * ImageTextExtractor - Tool for extracting text from images using Tesseract OCR
- * This class integrates with Spring AI as a callable tool
- */
 @Component
 public class ImageTextExtractor {
     private final Tesseract tesseract;
 
-    /**
-     * Constructor - Initializes Tesseract instance
-     */
     public ImageTextExtractor() {
         this.tesseract = new Tesseract();
-        // Set path to tessdata folder (optional - if not in default location)
-        // this.tesseract.setDatapath("path/to/tessdata");
     }
 
-    /**
-     * Constructor - Initializes Tesseract with custom tessdata path
-     * @param tessDataPath Path to tessdata directory containing language files
-     */
     public ImageTextExtractor(String tessDataPath) {
         this.tesseract = new Tesseract();
         this.tesseract.setDatapath(tessDataPath);
     }
 
-    /**
-     * Tool function to extract text from image with formatted output
-     * @param request ExtractTextRequest containing image path and format options
-     * @return ExtractTextResponse with extracted text and metadata
-     */
     public ExtractTextResponse extractTextFormatted(ExtractTextRequest request) {
         try {
             File imageFile = new File(request.imagePath);
-            // File imageFile = new File("C:\\Users\\sudhi\\Downloads\\photo.jpg");
             
             if (!imageFile.exists()) {
                 throw new IllegalArgumentException("Image file not found: " + request.imagePath);
             }
             
-            // Set language if provided
             if (request.language != null && !request.language.isEmpty()) {
                 tesseract.setLanguage(request.language);
             }
             
-            // Set PSM if provided
             if (request.pageSegmentationMode > 0) {
                 tesseract.setPageSegMode(request.pageSegmentationMode);
             }
             
             String extractedText = tesseract.doOCR(imageFile);
             
-            // Format the text based on preference
             String formattedText = formatText(extractedText, request.format);
             
             return new ExtractTextResponse(
@@ -96,12 +74,6 @@ public class ImageTextExtractor {
         }
     }
 
-    /**
-     * Extract text from an image file
-     * @param imagePath Path to the image file
-     * @return Extracted text as String
-     * @throws TesseractException if OCR processing fails
-     */
     public String extractText(String imagePath) throws TesseractException {
         File imageFile = new File(imagePath);
         
@@ -112,12 +84,6 @@ public class ImageTextExtractor {
         return tesseract.doOCR(imageFile);
     }
 
-    /**
-     * Extract text from an image file
-     * @param imageFile Image File object
-     * @return Extracted text as String
-     * @throws TesseractException if OCR processing fails
-     */
     public String extractText(File imageFile) throws TesseractException {
         if (!imageFile.exists()) {
             throw new IllegalArgumentException("Image file not found: " + imageFile.getAbsolutePath());
@@ -126,28 +92,14 @@ public class ImageTextExtractor {
         return tesseract.doOCR(imageFile);
     }
 
-    /**
-     * Set language for OCR recognition
-     * @param language Language code (e.g., "eng", "fra", "deu", "chi_sim")
-     */
     public void setLanguage(String language) {
         tesseract.setLanguage(language);
     }
 
-    /**
-     * Set page segmentation mode for OCR
-     * @param mode PSM value (0-13)
-     */
     public void setPageSegMode(int mode) {
         tesseract.setPageSegMode(mode);
     }
 
-    /**
-     * Format extracted text according to specified format
-     * @param text Raw extracted text
-     * @param format Format type (json, markdown, plain, structured)
-     * @return Formatted text
-     */
     private String formatText(String text, String format) {
         if (text == null || text.isEmpty()) {
             return "";
@@ -191,17 +143,10 @@ public class ImageTextExtractor {
         return sb.toString();
     }
 
-    /**
-     * Get Tesseract instance for advanced configuration
-     * @return Tesseract instance
-     */
     public Tesseract getTesseract() {
         return tesseract;
     }
 
-    /**
-     * Request class for extracting text with options
-     */
     public static class ExtractTextRequest {
         @JsonProperty("image_path")
         @JsonPropertyDescription("The file path to the image to extract text from")
@@ -233,9 +178,6 @@ public class ImageTextExtractor {
         }
     }
 
-    /**
-     * Response class for text extraction results
-     */
     public static class ExtractTextResponse {
         public String rawText;
         public String formattedText;

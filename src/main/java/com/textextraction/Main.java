@@ -3,19 +3,10 @@ package com.textextraction;
 import net.sourceforge.tess4j.TesseractException;
 import java.io.File;
 
-/**
- * Main - CLI tool for extracting text from images
- * Usage:
- *   - java -cp . com.textextraction.Main <image_path>
- *   - java -cp . com.textextraction.Main <image_path> <language> <format>
- *
- * Formats: plain, json, markdown, structured
- */
 public class Main {
 
     public static void main(String[] args) {
         try {
-            // Initialize the text extractor
             ImageTextExtractor extractor = new ImageTextExtractor();
             
             System.out.println("=== Image Text Extraction using Tesseract OCR ===\n");
@@ -23,8 +14,6 @@ public class Main {
             String imagePath = "";
             if (args.length == 0) {
                 imagePath = "C:\\Users\\sudhi\\Downloads\\photo.jpg";
-                // displayUsage();
-                // System.exit(0);
                 }else{
                 imagePath = args[0];
                 }
@@ -32,14 +21,12 @@ public class Main {
             String language = args.length > 1 ? args[1] : "eng";
             String format = args.length > 2 ? args[2] : "plain";
             
-            // Create request and extract text
             ImageTextExtractor.ExtractTextRequest request = new ImageTextExtractor.ExtractTextRequest(
                 imagePath, language, format
             );
             
             ImageTextExtractor.ExtractTextResponse response = extractor.extractTextFormatted(request);
             
-            // Display results
             displayResults(response);
             
         } catch (Exception e) {
@@ -49,10 +36,6 @@ public class Main {
         }
     }
 
-    /**
-     * Display extraction results
-     * @param response The extraction response
-     */
     private static void displayResults(ImageTextExtractor.ExtractTextResponse response) {
         System.out.println("\n" + "=".repeat(60));
         System.out.println("Extraction Results:");
@@ -73,9 +56,6 @@ public class Main {
         }
     }
 
-    /**
-     * Display usage information
-     */
     private static void displayUsage() {
         System.out.println("Usage: java com.textextraction.Main <image_path> [language] [format]");
         System.out.println("\nArguments:");

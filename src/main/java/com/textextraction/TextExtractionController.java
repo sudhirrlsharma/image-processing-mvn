@@ -3,9 +3,6 @@ package com.textextraction;
 import org.springframework.web.bind.annotation.*;
 import java.util.Map;
 
-/**
- * REST API Controller for Image Text Extraction
- */
 @RestController
 @RequestMapping("/api/text-extraction")
 public class TextExtractionController {
@@ -16,12 +13,6 @@ public class TextExtractionController {
         this.textExtractionService = textExtractionService;
     }
 
-    /**
-     * Extract text from image with specified format
-     * @param imagePath Path to the image file
-     * @param format Output format (plain, json, markdown, structured)
-     * @return Extracted text
-     */
     @GetMapping("/extract")
     public Map<String, Object> extractText(
             @RequestParam String imagePath,
@@ -42,21 +33,11 @@ public class TextExtractionController {
         }
     }
 
-    /**
-     * Extract text with structured output
-     * @param imagePath Path to the image file
-     * @return Structured extraction response
-     */
     @PostMapping("/extract-structured")
     public ImageTextExtractor.ExtractTextResponse extractStructured(@RequestBody ExtractionRequest request) {
         return textExtractionService.extractTextStructured(request.imagePath);
     }
 
-    /**
-     * Extract text with custom language and format
-     * @param request Extraction request with custom parameters
-     * @return Extraction response
-     */
     @PostMapping("/extract-custom")
     public ImageTextExtractor.ExtractTextResponse extractCustom(@RequestBody ExtractionRequest request) {
         return textExtractionService.extractTextCustom(
@@ -66,9 +47,6 @@ public class TextExtractionController {
         );
     }
 
-    /**
-     * Request class for extraction parameters
-     */
     public static class ExtractionRequest {
         public String imagePath;
         public String language;
