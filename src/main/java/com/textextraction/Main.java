@@ -7,7 +7,6 @@ public class Main {
 
     public static void main(String[] args) {
         try {
-            ImageTextExtractor extractor = new ImageTextExtractor();
             
             System.out.println("=== Image Text Extraction using Tesseract OCR ===\n");
             
@@ -20,7 +19,10 @@ public class Main {
             
             String language = args.length > 1 ? args[1] : "eng";
             String format = args.length > 2 ? args[2] : "plain";
+
             
+            ImageTextExtractor extractor = new ImageTextExtractor(new ImagePreprocessingService(), new ImagePostProcessing(), new AIService(null));
+
             ImageTextExtractor.ExtractTextRequest request = new ImageTextExtractor.ExtractTextRequest(
                 imagePath, language, format
             );

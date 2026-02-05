@@ -12,15 +12,17 @@ import com.fasterxml.jackson.annotation.JsonPropertyDescription;
 @Component
 public class ImageTextExtractor {
     private final Tesseract tesseract;
+    private final ImagePreprocessingService imagePreprocessingService;
+    private final ImagePostProcessing imagePostProcessing;
+    private final AIService aiService;
 
-    public ImageTextExtractor() {
+    public ImageTextExtractor(ImagePreprocessingService imagePreprocessingService, ImagePostProcessing imagePostProcessing, AIService aiService) {
         this.tesseract = new Tesseract();
+        this.imagePreprocessingService = imagePreprocessingService;
+        this.imagePostProcessing = imagePostProcessing;
+        this.aiService = aiService;
     }
 
-    public ImageTextExtractor(String tessDataPath) {
-        this.tesseract = new Tesseract();
-        this.tesseract.setDatapath(tessDataPath);
-    }
 
     public ExtractTextResponse extractTextFormatted(ExtractTextRequest request) {
         try {
@@ -38,12 +40,14 @@ public class ImageTextExtractor {
                 tesseract.setPageSegMode(request.pageSegmentationMode);
             }
             
+            // File preprocessedFile = this.imagePreprocessingService.preprocessImage(request.imagePath, true, true, true);
             String extractedText = tesseract.doOCR(imageFile);
+            String enhancedText = this.imagePostProcessing.enhanceOcrResult(extractedText);
             
-            String formattedText = formatText(extractedText, request.format);
+            String formattedText = formatText(enhancedText, request.format);
             
             return new ExtractTextResponse(
-                extractedText,
+                enhancedText,
                 formattedText,
                 imageFile.getName(),
                 imageFile.length(),
@@ -103,6 +107,10 @@ public class ImageTextExtractor {
     private String formatText(String text, String format) {
         if (text == null || text.isEmpty()) {
             return "";
+        }
+
+        if (aiService.isAvailable()) {
+            text = aiService.correctAndEnhanceText(text);
         }
         
         switch (format.toLowerCase()) {

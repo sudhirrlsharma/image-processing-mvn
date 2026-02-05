@@ -1,5 +1,7 @@
 package com.textextraction;
 
+import java.io.File;
+
 import org.springframework.stereotype.Service;
 
 @Service
@@ -7,7 +9,7 @@ public class TextExtractionService {
 
     private final ImageTextExtractor imageTextExtractor;
 
-    public TextExtractionService(ImageTextExtractor imageTextExtractor) {
+    public TextExtractionService(ImageTextExtractor imageTextExtractor, ImagePreprocessingService imagePreprocessingService) {
         this.imageTextExtractor = imageTextExtractor;
     }
 
