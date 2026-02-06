@@ -1,7 +1,5 @@
 package com.textextraction;
 
-import java.io.File;
-
 import org.springframework.stereotype.Service;
 
 @Service
